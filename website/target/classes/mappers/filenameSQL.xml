@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zaku.persistence.FilenameDAO">
+	<select id="selectOne" resultType="FilenameVO" parameterType="Integer">
+		select * from tbl_filename where fno=#{fno}
+	</select>
+	
+	<insert id="insert" parameterType="FilenameVO"  >
+	    insert into tbl_filename(bno,filename,thumbnail)
+	    values(#{bno},#{filename},#{thumbnail})
+	</insert>
+
+   <insert id="inAndGetFno"  parameterType="FilenameVO" >
+    insert into tbl_filename(bno,filename,thumbnail)
+	    values(#{bno},#{filename},#{thumbnail})
+	    <selectKey keyProperty="fno" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+   </insert>
+   
+
+
+
+     <delete id="deleteOne" parameterType="Integer">
+       delete from tbl_filename where fno=#{id}
+     </delete>
+
+     <delete id="deleteList" parameterType="Integer">
+       delete from tbl_filename where bno=#{id}
+     </delete>
+
+      <update id="updateOne" parameterType="FilenameVO" >
+       update tbl_filename 
+       set bno=#{bno}
+           where fno=#{fno}
+      </update>
+      
+  	<select id="selectList" resultType="FilenameVO" parameterType="org.zaku.domain.Pageable">
+    	 select * from tbl_filename where fno>0 
+    	 order by fno desc
+    	 limit #{skip},#{amount}  
+  	</select>
+    
+    <select id="selectBnoListAll" resultType="FilenameVO" parameterType="Integer">
+    	 select * from tbl_filename where bno=#{bno}
+    	 order by fno desc
+  	</select>
+
+
+
+  	<select id="getCount" resultType="Integer">
+   	select count(fno) from tbl_filename where fno > 0
+  	</select>
+
+</mapper>

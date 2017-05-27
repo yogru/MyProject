@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zaku.persistence.ReplyDAO">
+	<select id="selectOne" resultType="ReplyVO" parameterType="Integer">
+		select * from tbl_reply where rno=#{rno}
+	</select>
+	
+	<insert id="insert" parameterType="org.zaku.domain.ReplyVO">
+	    insert into tbl_reply(bno,content,writer)
+	    values(#{bno},#{content},#{writer})
+	     <selectKey keyProperty="rno" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+
+     <delete id="deleteOne"  parameterType="Integer" >
+       delete from tbl_reply where rno=#{id}
+     </delete>
+
+      <update id="updateOne" parameterType="ReplyVO" >
+       update tbl_reply 
+       set content=#{content}, writer=#{writer}
+       where rno=#{rno}
+      </update>
+      
+  	<select id="selectList" resultType="ReplyVO" parameterType="org.zaku.domain.Pageable">
+    	 select * from tbl_reply where rno>0 
+    	 order by rno desc 
+    	 limit #{skip},#{amount}  
+  	</select>
+
+    <select id="selectOfBnoList" resultType="ReplyVO" parameterType="HashMap">
+    	 select * from tbl_reply where rno>0 AND bno=#{bno}
+    	 order by rno desc 
+    	 limit #{skip},#{amount}  
+  	</select>
+    
+
+
+  	<select id="getCount"  parameterType="Integer"  resultType="Integer">
+   	select count(rno) from tbl_reply where rno > 0 AND bno=#{bno}
+  	</select>
+  	
+  	<select id="getCountOfBno" resultType="Integer">
+   	select count(rno) from tbl_reply where bno = #{bno}
+  	</select>
+  	
+		
+</mapper>

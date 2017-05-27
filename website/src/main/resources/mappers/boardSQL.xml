@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zaku.persistence.BoardDAO">
+	<select id="selectOne" resultType="BoardVO" parameterType="Integer">
+		select * from tbl_board where bno=#{bno}
+	</select>
+	
+	<insert id="insert" parameterType="BoardVO">
+	    insert into tbl_board(title,content,writer)
+	    values(#{title},#{content},#{writer})
+	     <selectKey keyProperty="bno" resultType="Integer" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+	</insert>
+
+
+
+
+     <delete id="deleteOne"  parameterType="Integer" >
+       delete from tbl_board where bno=#{id}
+     </delete>
+
+      <update id="updateOne" parameterType="BoardVO" >
+       update tbl_board 
+       set title=#{title}, content=#{content}, writer=#{writer}
+       where bno=#{bno}
+      </update>
+      
+  	<select id="selectList" resultType="BoardVO" parameterType="org.zaku.domain.Pageable">
+    	 select * from tbl_board where bno>0 
+    	 order by bno desc
+    	 limit #{skip},#{amount}  
+  	</select>
+
+  	<select id="getCount" resultType="Integer">
+   	select count(bno) from tbl_board where bno > 0
+  	</select>
+
+
+	<select id="dynamicList" resultType="BoardVO" parameterType="HashMap">
+		select * from tbl_board 
+	 <![CDATA[ where bno <0 ]]>
+		<foreach item="it"  collection="list">
+		 OR  ${it} LIKE concat('%', #{keyword} ,'%') 
+		 </foreach>
+		order by bno desc
+		 limit #{page.skip},#{page.amount}
+		
+	</select>
+	
+	<select id="getCountInSearchable" resultType="Integer" parameterType="HashMap">
+	 	select count(bno) from tbl_board 
+	 	 <![CDATA[ where bno <0 ]]> 
+	     <foreach item="it"  collection="list">
+		  OR ${it} LIKE concat('%', #{keyword} ,'%') 
+		 </foreach>
+	</select>
+	
+</mapper>
